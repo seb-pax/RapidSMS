@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.pacreau.seb.rapidsms.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <TextView
+        android:id="@+id/lastMessageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/lastMessageLabel"/>
+
+    <TextView
+        android:id="@+id/lastMessageTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/lastMessageLabel"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+        android:gravity="center_vertical"
+        android:text="   le "/>
+
+    <TextView
+        android:id="@+id/lastMessageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/lastMessageTo"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@android:drawable/ic_dialog_email"
+        android:gravity="center_vertical"
+        android:hint="   à "/>
+
+    <TextView
+        android:id="@+id/lastMessageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/lastMessageDate"
+        android:layout_marginTop="20dp"
+        android:drawableLeft="@android:drawable/ic_menu_edit"
+        android:gravity="center_vertical"
+        android:hint="   à "/>
+</RelativeLayout>
