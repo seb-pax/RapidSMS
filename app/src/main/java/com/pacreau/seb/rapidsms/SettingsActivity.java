@@ -36,6 +36,7 @@ import java.util.List;
 public class SettingsActivity extends AppCompatPreferenceActivity {
     public static final String PHONE_NUMBER_PREF_KEY = "phone_number" ;
     public static final String MESSAGE_KEY_PREF = "message" ;
+    public static final String RINGTONE_KEY_PREF = "notifications_new_message_ringtone";
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.

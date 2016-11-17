@@ -6,3 +6,64 @@
 .DS_Store
 /build
 /captures
+
+
+# Directories #
+**/build/
+**/bin/
+**/target/
+**/generated-java/
+**/logs/
+**/gen/
+*.class
+**/gen/**
+# Package Files #
+*.war
+*.ear
+*.db
+*.apk
+
+######################
+# Windows
+######################
+
+# Windows image file caches
+Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+######################
+# OS X
+######################
+.DS_Store
+
+# Thumbnails
+._*
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+######################
+# Eclipse
+######################
+.project*
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+.settings/
+
+######################
+# IntelliJ IDEA
+######################
+.idea/
+*.iml
+
+#Emacs
+*~
+
+**/.classpath
+**/project.properties

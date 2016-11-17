@@ -12,9 +12,9 @@
     </string>
 -->
     <string name="pref_title_display_message">Message</string>
-    <string name="pref_default_display_message">Je pars</string>
+    <string name="pref_default_display_message">I went</string>
 
-    <string name="pref_title_display_phone_number">Numéro</string>
+    <string name="pref_title_display_phone_number">Phone number</string>
     <string name="pref_default_display_phone_number">06 62 69 66 19</string>
     <!--
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
@@ -63,12 +63,26 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Configuration</string>
-    <string name="settings_title">Configuration</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
+    <string name="action_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="appwidget_text">SAMPLE</string>
+    <string name="configure">Settings</string>
     <string name="add_widget">Add widget</string>
 
     <string name="title_activity_main">Rapid SMS</string>
-    <string name="lastMessageLabel">Dernier message envoyé :</string>
+
+    <string name="lastMessageLabel">Last sent message :</string>
+    <string name="lastMessageTo">&#160;&#160;&#160;to&#160;</string>
+    <string name="lastMessageDate">&#160;&#160;&#160;at&#160;</string>
+    <string name="lastMessageFormatDate">MM/dd/yyyy HH:mm:ss</string>
+    <string name="lastMessageContent">Content :</string>
+
+    <string name="errorMessageNotSent">Error : Message not sent to&#160;</string>
+    <string name="errorMessageNotSentPhoneNumberNotDefined">Number phone undefined</string>
+    <string name="modifySettings">Défine a phone</string>
+
+    <string name="okMessageSent">Message sent to&#160;</string>
+    <string name="titleMessageSentNotif">Rapid SMS sent to&#160;</string>
+    <string name="contentMessageSentNotif">the&#160;</string>
+
 </resources>

@@ -5,10 +5,10 @@ import java.util.Date;
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -99,13 +99,25 @@ public class MainActivity extends AppCompatActivity
                 .getDefaultSharedPreferences(this)
                 .getString(SettingsActivity.PHONE_NUMBER_PREF_KEY, "");
         try {
+            if (sPhoneNumber.isEmpty()) {
+                final MainActivity moi = this;
+                Snackbar.make(p_view, this.getResources().getString(R.string.errorMessageNotSentPhoneNumberNotDefined)
+                        + sPhoneNumber, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Modifier", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View p_view) {
+                                startActivity(new Intent(moi, SettingsActivity.class));
+                            }
+                        }).show();
+                return;
+            }
             String sMessage = PreferenceManager
                     .getDefaultSharedPreferences(this)
                     .getString(SettingsActivity.MESSAGE_KEY_PREF, "");
 
-            //SmsManager.getDefault().sendTextMessage(sPhoneNumber, null, sMessage, null, null);
+            SmsManager.getDefault().sendTextMessage(sPhoneNumber, null, sMessage, null, null);
 
-            SimpleDateFormat oFormatDate = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+            SimpleDateFormat oFormatDate = new SimpleDateFormat(this.getResources().getString(R.string.lastMessageFormatDate));
             String sDate = oFormatDate.format(new Date());
 
             PreferenceManager
@@ -114,18 +126,20 @@ public class MainActivity extends AppCompatActivity
                     .putString(LAST_SENDING_TO, sPhoneNumber)
                     .putString(LAST_SENDING_CONTENT, sMessage).commit();
 
+            Snackbar.make(p_view, this.getResources().getString(R.string.okMessageSent) + sPhoneNumber, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+
             changeUIDesign(p_view, sPhoneNumber, sDate, sMessage);
             sendLocalNotification(sPhoneNumber, sMessage , sDate);
 
         } catch (Exception e) {
-            Snackbar.make(p_view, "Message pas envoyé au " + sPhoneNumber, Snackbar.LENGTH_LONG)
+            Snackbar.make(p_view, this.getResources().getString(R.string.errorMessageNotSent)
+                    + sPhoneNumber, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
     }
 
     private void changeUIDesign(View p_view, String p_sPhoneNumber , String p_sDate, String p_sContent) {
-        Snackbar.make(p_view, "Message envoyé au " + p_sPhoneNumber, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
 
         TextView oTextView = (TextView) findViewById(R.id.lastMessageDate);
         oTextView.setText(p_sDate);
@@ -138,23 +152,31 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void sendLocalNotification(String p_sPhoneNumber, String p_sMessage, String p_sDate) {
-        Context ctx = this.getApplicationContext();
+        Context ctx = getApplicationContext();
 
-        String title = "RapidSMS envoyé au " + p_sPhoneNumber ;
-        String content = "le " + p_sDate ;
+        String title = getResources().getString(R.string.titleMessageSentNotif) + p_sPhoneNumber ;
+        String content = getResources().getString(R.string.contentMessageSentNotif) + p_sDate ;
+        // récup du son dans les prefs
+        String stringPrefValue = PreferenceManager
+                .getDefaultSharedPreferences(this).getString(SettingsActivity.RINGTONE_KEY_PREF, "");
+        Uri uriNotificationSound;
+        if (stringPrefValue.isEmpty()) {
+            uriNotificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        } else {
+            uriNotificationSound = Uri.parse(stringPrefValue);
+        }
+
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(ctx);
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         notifBuilder
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker(title)
                 .setContentTitle(title)
-                .setContentText(content)
-                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND);
-        notifBuilder.setSound(uri);
+                .setContentText(content);
+        notifBuilder.setSound(uriNotificationSound);
 
-        // Add Big View Specific Configuration
+        // Mise en forme multiligne
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
         inboxStyle.setBigContentTitle(title);
         inboxStyle.addLine(content).addLine( p_sMessage);
@@ -190,8 +212,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent oIntent = new Intent(this, SettingsActivity.class);
-            this.startActivity(oIntent);
+            this.startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
