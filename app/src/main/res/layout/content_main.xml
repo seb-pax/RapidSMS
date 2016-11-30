@@ -26,9 +26,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/lastMessageLabel"
         android:layout_marginTop="20dp"
         android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+        android:drawableStart="@android:drawable/ic_menu_my_calendar"
         android:gravity="center_vertical"
         android:text="@string/lastMessageTo"/>
 
@@ -37,9 +39,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/lastMessageTo"
         android:layout_marginTop="20dp"
         android:drawableLeft="@android:drawable/ic_dialog_email"
+        android:drawableStart="@android:drawable/ic_dialog_email"
         android:gravity="center_vertical"
         android:hint="@string/lastMessageDate"/>
 
@@ -48,9 +52,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/lastMessageDate"
         android:layout_marginTop="20dp"
         android:drawableLeft="@android:drawable/ic_menu_edit"
+        android:drawableStart="@android:drawable/ic_menu_edit"
         android:gravity="center_vertical"
         android:hint="@string/lastMessageContent"/>
 </RelativeLayout>

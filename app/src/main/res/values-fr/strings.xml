@@ -1,16 +1,12 @@
 <resources>
     <string name="app_name">Rapid SMS</string>
+    <string name="app_creator">SebPax</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-    <!--
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
--->
+
     <string name="pref_title_display_message">Message</string>
     <string name="pref_default_display_message">Je pars</string>
 
@@ -65,9 +61,6 @@
 
     <string name="action_settings">Configuration</string>
     <string name="settings_title">Configuration</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configurer</string>
-    <string name="add_widget">Ajouter le widget</string>
 
     <string name="title_activity_main">Rapid SMS</string>
     <string name="lastMessageLabel">Dernier message envoyé :</string>
@@ -75,10 +68,7 @@
     <string name="lastMessageDate">   le </string>
     <string name="lastMessageFormatDate">dd/MM/yyyy HH:mm:ss</string>
     <string name="lastMessageContent">Contenu :</string>
-    <string name="errorMessageNotSent">Message pas envoyé au&#160;</string>
     <string name="errorMessageNotSentPhoneNumberNotDefined">Numéro de téléphone indéfini</string>
-    <string name="modifySettings">Définir un téléphone</string>
-    <string name="okMessageSent">Message envoyé au&#160;</string>
     <string name="titleMessageSentNotif">Rapid SMS envoyé à&#160;</string>
     <string name="contentMessageSentNotif">le&#160;</string>
 

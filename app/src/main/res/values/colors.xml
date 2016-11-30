@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="colorPrimary">@android:color/holo_orange_light</color>
     <color name="colorPrimaryDark">@android:color/holo_orange_dark</color>
     <color name="colorAccent">#ffee5522</color>
-    <color name="design_snackbar_background_color">@color/colorPrimary</color>
+    <color name="design_snackbar_background_color" tools:override="true">@color/colorPrimary</color>
 </resources>
