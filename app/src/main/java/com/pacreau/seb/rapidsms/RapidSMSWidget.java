@@ -5,9 +5,11 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
@@ -18,6 +20,18 @@ import android.widget.RemoteViews;
 public class RapidSMSWidget extends AppWidgetProvider {
 
     private final static String SEND_SMS_ACTION = "com.pacreau.seb.rapidsms.SendSms";
+    private BroadcastReceiver smsSentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SmsService.doOnSmsSend(getResultCode(), context, intent);
+        }
+    };
+    private BroadcastReceiver smsDeliveredReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            SmsService.doOnSmsDelivered(getResultCode(), context, intent);
+        }
+    };
 
     static void updateAppWidget(Context p_context, AppWidgetManager p_appWidgetManager, int p_appWidgetId) {
 
@@ -80,6 +94,9 @@ public class RapidSMSWidget extends AppWidgetProvider {
     public void onReceive(Context p_context, Intent p_intent) {
         super.onReceive(p_context, p_intent);
         if (SEND_SMS_ACTION.equals(p_intent.getAction())) { // clic sur le bouton dans le widget
+            p_context.getApplicationContext().registerReceiver(smsSentReceiver, new IntentFilter(SmsService.SENT));
+            p_context.getApplicationContext().registerReceiver(smsDeliveredReceiver, new IntentFilter(SmsService.DELIVERED));
+
             SmsService.getInstance().sendSms(p_context);
         } else {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(p_context);

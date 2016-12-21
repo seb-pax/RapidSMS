@@ -1,6 +1,10 @@
 package com.pacreau.seb.rapidsms;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -14,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,12 +62,32 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        String sPhoneNumber = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_TO, "");
+        final String sPhoneNumber = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_TO, "");
         String sDate = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_DATE, "");
-        String sContent = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_CONTENT, "");
-        SmsService.getInstance().changeUIDesign(this, sPhoneNumber, sDate, sContent);
-    }
+        final String sContent = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_CONTENT, "");
+        this.changeUIDesign(sPhoneNumber, sDate, sContent);
 
+        /* Register for SMS send action */
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SmsService.doOnSmsSend(getResultCode(), context, intent);
+            }
+        }, new IntentFilter(SmsService.SENT));
+
+        final Activity oMyContext = this;
+        /* Register for Delivery event */
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                SmsService.doOnSmsDelivered(getResultCode(), context, intent);
+                String sMessage = intent.getStringExtra(MainActivity.LAST_SENDING_CONTENT);
+                String sDate = intent.getStringExtra(MainActivity.LAST_SENDING_DATE);
+                String sPhoneNumber = intent.getStringExtra(MainActivity.LAST_SENDING_TO);
+                changeUIDesign(sPhoneNumber, sDate, sMessage);
+            }
+        }, new IntentFilter(SmsService.DELIVERED));
+    }
 
     @Override
     public void onBackPressed() {
@@ -113,4 +138,21 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void changeUIDesign(String p_sPhoneNumber, String p_sDate, String p_sContent) {
+
+        TextView oTextView = (TextView) this.findViewById(R.id.lastMessageDate);
+        if (oTextView != null) {
+            oTextView.setText(p_sDate);
+        }
+        oTextView = (TextView) this.findViewById(R.id.lastMessageTo);
+        if (oTextView != null) {
+            oTextView.setText(p_sPhoneNumber);
+        }
+        oTextView = (TextView) this.findViewById(R.id.lastMessageContent);
+        if (oTextView != null) {
+            oTextView.setText(p_sContent);
+        }
+    }
+
 }
