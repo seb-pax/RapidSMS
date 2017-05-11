@@ -72,6 +72,8 @@
 
     <string name="errorMessageNotSentPhoneNumberNotDefined">Number phone undefined</string>
 
+    <string name="titleMessageEnPartancetNotif">Rapid SMS on the road for&#160;</string>
+
     <string name="titleMessageSentNotif">Rapid SMS sent to&#160;</string>
     <string name="contentMessageSentNotif">the&#160;</string>
 

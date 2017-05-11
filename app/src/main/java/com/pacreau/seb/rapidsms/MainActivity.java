@@ -1,13 +1,11 @@
 package com.pacreau.seb.rapidsms;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,17 +15,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String SENDING_SMS = "SENDING_SMS";
-    public static final String LAST_SENDING_DATE = "LAST_SENDING_DATE";
-    public static final String LAST_SENDING_TO = "LAST_SENDING_TO";
-    public static final String LAST_SENDING_CONTENT = "LAST_SENDING_CONTENT";
+
     private static final int DURATION_WAIT_IN_MS = 5000;
+
+    @ViewById(R.id.lastMessageDate)
+    public TextView lastMessageDateTextView;
+
+    @ViewById(R.id.lastMessageTo)
+    public TextView lastMessageNumberTextView;
+
+    @ViewById(R.id.lastMessageContent)
+    public TextView lastMessageContentTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,29 +72,39 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final String sPhoneNumber = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_TO, "");
-        String sDate = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_DATE, "");
-        final String sContent = PreferenceManager.getDefaultSharedPreferences(this).getString(LAST_SENDING_CONTENT, "");
-        this.changeUIDesign(sPhoneNumber, sDate, sContent);
+
+        lastMessageNumberTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent oSettings = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(oSettings);
+                return false;
+            }
+        });
+        Message oMessage = MessageDao.getInstance().findMessage(thisFinal, true);
+        this.changeUIDesign(oMessage);
 
         /* Register for SMS send action */
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Message oMessage = MessageDao.getInstance().findMessage(context.getApplicationContext(), false);
+                intent.putExtra(SmsService.SENT, oMessage);
                 SmsService.doOnSmsSend(getResultCode(), context, intent);
             }
         }, new IntentFilter(SmsService.SENT));
 
-        final Activity oMyContext = this;
+        //final Activity oMyContext = this;
         /* Register for Delivery event */
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Message oMessage = MessageDao.getInstance().findMessage(context.getApplicationContext(), false);
+                intent.putExtra(SmsService.SENT, oMessage);
                 SmsService.doOnSmsDelivered(getResultCode(), context, intent);
-                String sMessage = intent.getStringExtra(MainActivity.LAST_SENDING_CONTENT);
-                String sDate = intent.getStringExtra(MainActivity.LAST_SENDING_DATE);
-                String sPhoneNumber = intent.getStringExtra(MainActivity.LAST_SENDING_TO);
-                changeUIDesign(sPhoneNumber, sDate, sMessage);
+                oMessage = MessageDao.getInstance().findMessage(context.getApplicationContext(), true);
+                changeUIDesign(oMessage);
+
             }
         }, new IntentFilter(SmsService.DELIVERED));
     }
@@ -139,20 +159,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void changeUIDesign(String p_sPhoneNumber, String p_sDate, String p_sContent) {
-
-        TextView oTextView = (TextView) this.findViewById(R.id.lastMessageDate);
-        if (oTextView != null) {
-            oTextView.setText(p_sDate);
-        }
-        oTextView = (TextView) this.findViewById(R.id.lastMessageTo);
-        if (oTextView != null) {
-            oTextView.setText(p_sPhoneNumber);
-        }
-        oTextView = (TextView) this.findViewById(R.id.lastMessageContent);
-        if (oTextView != null) {
-            oTextView.setText(p_sContent);
-        }
+    public void changeUIDesign(Message p_oMessage) {
+        lastMessageDateTextView.setText(p_oMessage.getDate());
+        lastMessageNumberTextView.setText(p_oMessage.getRecipient());
+        lastMessageContentTextView.setText(p_oMessage.getContent());
     }
 
 }

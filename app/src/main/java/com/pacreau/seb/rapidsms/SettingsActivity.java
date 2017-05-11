@@ -1,7 +1,6 @@
 package com.pacreau.seb.rapidsms;
 
 
-import java.util.List;
 import android.annotation.TargetApi;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -24,6 +23,8 @@ import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -83,7 +84,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         // name.
                         String name = ringtone.getTitle(preference.getContext());
                         preference.setSummary(name);
-                    }
+                }
                 }
 
             } else {
@@ -152,6 +153,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Intent resultValue = new Intent();
             resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             setResult(RESULT_OK, resultValue);
+            //if (extras.get(PHONE_NUMBER_PREF_KEY) != null) {
+            //
+            //}
         }
 
     }
@@ -207,7 +211,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         int numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
                         String number = cursor.getString(numberColumnIndex);
                         Toast.makeText(getApplicationContext(), number + "'s phone number found: ", Toast.LENGTH_SHORT).show();
-                        PreferenceManager.getDefaultSharedPreferences(this).edit().putString(PHONE_NUMBER_PREF_KEY, number).commit();
+                        Message oMessage = new Message();
+                        oMessage.setRecipient(number);
+                        MessageDao.saveMessage(this.getApplicationContext(), oMessage, false);
                         cursor.close();
                     }
 

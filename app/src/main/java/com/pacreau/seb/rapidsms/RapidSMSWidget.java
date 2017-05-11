@@ -10,7 +10,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 /**
@@ -20,28 +19,31 @@ import android.widget.RemoteViews;
 public class RapidSMSWidget extends AppWidgetProvider {
 
     private final static String SEND_SMS_ACTION = "com.pacreau.seb.rapidsms.SendSms";
+    
     private BroadcastReceiver smsSentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Message oMessage = MessageDao.getInstance().findMessage(context.getApplicationContext(), false);
+            intent.putExtra(SmsService.SENT, oMessage);
             SmsService.doOnSmsSend(getResultCode(), context, intent);
         }
     };
     private BroadcastReceiver smsDeliveredReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Message oMessage = MessageDao.getInstance().findMessage(context.getApplicationContext(), false);
+            intent.putExtra(SmsService.SENT, oMessage);
             SmsService.doOnSmsDelivered(getResultCode(), context, intent);
         }
     };
 
     static void updateAppWidget(Context p_context, AppWidgetManager p_appWidgetManager, int p_appWidgetId) {
 
-        String sPhoneNumber = PreferenceManager
-                .getDefaultSharedPreferences(p_context)
-                .getString(SettingsActivity.PHONE_NUMBER_PREF_KEY, "");
+        Message oMessage = MessageDao.getInstance().findMessage(p_context.getApplicationContext(), true);
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(p_context.getPackageName(), R.layout.rapid_smswidget);
-        views.setTextViewText(R.id.action_send_sms, sPhoneNumber);
+        views.setTextViewText(R.id.action_send_sms, oMessage.getRecipient());
 
         Intent intent = new Intent(p_context, RapidSMSWidget.class);
         intent.setAction(SEND_SMS_ACTION);
@@ -50,6 +52,7 @@ public class RapidSMSWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         p_appWidgetManager.updateAppWidget(p_appWidgetId, views);
+
     }
 
     public static void updateWidget(Activity p_oActivity) {
@@ -97,7 +100,12 @@ public class RapidSMSWidget extends AppWidgetProvider {
             p_context.getApplicationContext().registerReceiver(smsSentReceiver, new IntentFilter(SmsService.SENT));
             p_context.getApplicationContext().registerReceiver(smsDeliveredReceiver, new IntentFilter(SmsService.DELIVERED));
 
-            SmsService.getInstance().sendSms(p_context);
+            SmsService.sendSms(p_context);
+            //p_context.startActivity(p_intent);
+            final Message oMessage = MessageDao.getInstance().findMessage(p_context.getApplicationContext(), false);
+            SmsService.sendLocalNotification(p_context, oMessage);
+            // les toasts ne fonctionnent pas
+            //t1 = Toast.makeText(p_context, "SMS en partance vers " +oMessage.getRecipient(), Toast.LENGTH_LONG);
         } else {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(p_context);
             int[] ids = p_intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
